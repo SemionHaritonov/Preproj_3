@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/admin")
@@ -47,24 +48,27 @@ public class AdminController {
     @GetMapping("/users/new")
     public String newUser(Model model) {
         model.addAttribute("user", new User());
+        List<Role> roles = new ArrayList<>(roleService.findAll());
+        model.addAttribute("allRoles", roles);
         return "admin/users/new";
     }
 
     @GetMapping("/users/{id}")
     public String show(@PathVariable("id") Long id, Model model) {
         model.addAttribute("user", userService.findUserById(id));
+
         return "admin/users/show";
     }
 
     @PatchMapping("/users/{id}")
     public String update(@ModelAttribute("user") @Valid User user,
                          BindingResult bindingResult,
-                         @PathVariable("id") Long id) {
+                         @PathVariable("id") Long id,
+                         @ModelAttribute("allRoles") ArrayList<Role> roleList) {
         userUpdatingValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors()) {
             return "admin/users/edit";
         }
-
 
         userService.update(id, user);
         return "redirect:/admin/users";
@@ -76,6 +80,10 @@ public class AdminController {
         System.out.println(user.getRoles());
         user.setPassword("write_new_password");
         model.addAttribute("user", userService.findUserById(id));
+
+        List<Role> roles = new ArrayList<>(roleService.findAll());
+        model.addAttribute("allRoles", roles);
+
         return "admin/users/edit";
     }
 

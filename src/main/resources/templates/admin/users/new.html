@@ -30,6 +30,19 @@
 
     <br>
 
+    <p>
+        <label>Roles:
+            <input type="checkbox" name="roles"
+                   th:each="role : ${allRoles}"
+                   th:text="${role.name}"
+                   th:value="${role.id}"
+                   th:field="*{roles}"
+            />
+        </label>
+    </p>
+
+    <br>
+
     <input type="submit" value="Add User">
 
 </form>

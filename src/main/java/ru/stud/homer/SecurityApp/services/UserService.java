@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.stud.homer.SecurityApp.models.Role;
 import ru.stud.homer.SecurityApp.models.User;
 import ru.stud.homer.SecurityApp.repositories.UserRepository;
 import ru.stud.homer.SecurityApp.security.UserDetailsImpl;
@@ -53,11 +52,6 @@ public class UserService implements UserDetailsService {
     public void add(User user) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
-        Role role = roleService.findRoleByName("ROLE_USER");
-        Set<Role> roleSet = new HashSet<>(Set.of(role));
-        user.setRoles(roleSet);
-        Set<User> userSet = new HashSet<>(Set.of(user));
-        role.setUsers(userSet);
         userRepository.save(user);
     }
 
@@ -67,6 +61,7 @@ public class UserService implements UserDetailsService {
         userToBeUpdated.setName(user.getName());
         userToBeUpdated.setEmail(user.getEmail());
         userToBeUpdated.setAge(user.getAge());
+        userToBeUpdated.setRoles(user.getRoles());
         if (!Objects.equals(user.getPassword(), "write_new_password")) {
             String encodedPassword = passwordEncoder.encode(user.getPassword());
             userToBeUpdated.setPassword(encodedPassword);
